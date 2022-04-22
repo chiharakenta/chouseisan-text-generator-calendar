@@ -72,3 +72,49 @@ function createProcess(year, month) {
     }
     return calendar;
 }
+
+const schedules = [];
+
+document.addEventListener('click', (event) => {
+  if(event.target.tagName.toLowerCase() !== 'td') return;
+  if(event.target.classList.contains('disabled')) return;
+
+  const { year, month, date } = event.target.dataset;
+
+  if(event.target.classList.contains('active')) {
+    event.target.classList.remove('active');
+    const scheduleIndex = getScheduleIndexByDate(year, month, date);
+    deleteScheduleByIndex(scheduleIndex);
+  } else {
+    event.target.classList.add('active');
+    createSchedule(year, month, date);
+  }
+
+  renderScheduleText();
+});
+
+const getScheduleIndexByDate = (year, month, date) => {
+  for(let i in schedules) {
+    if(schedules[i].date === new Date(year, month, date)) {
+      return i;
+    }
+  }
+};
+
+const createSchedule = (year, month, date) => {
+  schedules.push({
+    date: new Date(year, month, date)
+  });
+}
+
+const deleteScheduleByIndex = (index) => {
+  schedules.splice(index, 1);
+};
+
+const renderScheduleText = () => {
+  let scheduleText = '';
+  schedules.forEach((schedule) => {
+    scheduleText = `${scheduleText}${schedule.date.getFullYear()}/${schedule.date.getMonth() + 1}/${schedule.date.getDate()}(${week[schedule.date.getDay()]})\n`;
+  });
+  document.getElementById('scheduleText').textContent = scheduleText;
+};
