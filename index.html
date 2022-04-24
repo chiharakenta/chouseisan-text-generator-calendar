@@ -26,10 +26,18 @@
 
     <div class="wrapper mt-3">
         <div>
-            <input type="radio" class="schedule-type" id="scheduleType1" name="scheduleType" value="dayOnly"
-                checked><label for="scheduleType1">日付のみ選択</label>
-            <input type="radio" class="schedule-type" id="scheduleType2" name="scheduleType" value="selectTime"><label
-                for="scheduleType2">開始時刻を選択</label>
+            <div>
+                <input type="radio" class="schedule-type" id="scheduleType1" name="scheduleType" value="dayOnly"
+                    checked><label for="scheduleType1">日付のみ選択</label>
+            </div>
+            <div>
+                <input type="radio" class="schedule-type" id="scheduleType2" name="scheduleType"
+                    value="selectTime"><label for="scheduleType2">開始時刻を選択</label>
+            </div>
+            <div>
+                <input type="radio" class="schedule-type" id="scheduleType3" name="scheduleType"
+                    value="selectEveryHour"><label for="scheduleType3">一時間ごとの空き状況を選択</label>
+            </div>
         </div>
         <div>
             <textarea name="scheduleText" id="scheduleText" cols="30" rows="10"></textarea>

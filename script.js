@@ -153,6 +153,17 @@ const renderScheduleText = () => {
       });
     });
   }
+  if (scheduleType === "selectEveryHour") {
+    schedules.forEach((schedule) => {
+      schedule.times.forEach((time) => {
+        scheduleText = `${scheduleText}${schedule.date.getFullYear()}/${
+          schedule.date.getMonth() + 1
+        }/${schedule.date.getDate()}(${
+          week[schedule.date.getDay()]
+        }) ${time}:00~${time + 1}:00\n`;
+      });
+    });
+  }
   document.getElementById("scheduleText").textContent = scheduleText;
 };
 
@@ -180,7 +191,7 @@ Array.from(document.getElementsByClassName("schedule-type")).forEach(
           activeDate.removeAttribute("data-bs-target");
         });
       }
-      if (scheduleType === "selectTime") {
+      if (scheduleType === "selectTime" || scheduleType === "selectEveryHour") {
         activeDates.forEach((activeDate) => {
           activeDate.classList.add("open-modal");
           activeDate.setAttribute("data-bs-toggle", "modal");
@@ -227,7 +238,13 @@ document.addEventListener("click", (event) => {
     timeScheduleButton.dataset.month = modalDate.getMonth();
     timeScheduleButton.dataset.date = modalDate.getDate();
     timeScheduleButton.dataset.time = i;
-    timeScheduleButton.textContent = `${i}:00~`;
+    if (scheduleType === "selectTime") {
+      timeScheduleButton.textContent = `${i}:00~`;
+    }
+    if (scheduleType === "selectEveryHour") {
+      timeScheduleButton.textContent = `${i}:00~${i + 1}:00`;
+    }
+
     timeSchedule.appendChild(timeScheduleButton);
   }
   const scheduleIndex = getScheduleIndexByDate(year, month, date);
