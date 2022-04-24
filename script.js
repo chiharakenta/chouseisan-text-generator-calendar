@@ -91,6 +91,7 @@ function createProcess(year, month) {
 }
 
 const schedules = [];
+let scheduleType = "dayOnly";
 
 document.addEventListener("click", (event) => {
   if (event.target.tagName.toLowerCase() !== "td") return;
@@ -121,6 +122,7 @@ const getScheduleIndexByDate = (year, month, date) => {
 const createSchedule = (year, month, date) => {
   schedules.push({
     date: new Date(year, month, date),
+    times: [],
   });
 };
 
@@ -131,11 +133,24 @@ const deleteScheduleByIndex = (index) => {
 const renderScheduleText = () => {
   sortSchedulesAscending();
   let scheduleText = "";
-  schedules.forEach((schedule) => {
-    scheduleText = `${scheduleText}${schedule.date.getFullYear()}/${
-      schedule.date.getMonth() + 1
-    }/${schedule.date.getDate()}(${week[schedule.date.getDay()]})\n`;
-  });
+  if (scheduleType === "dayOnly") {
+    schedules.forEach((schedule) => {
+      scheduleText = `${scheduleText}${schedule.date.getFullYear()}/${
+        schedule.date.getMonth() + 1
+      }/${schedule.date.getDate()}(${week[schedule.date.getDay()]})\n`;
+    });
+  }
+  if (scheduleType === "selectTime") {
+    schedules.forEach((schedule) => {
+      schedule.times.forEach((time) => {
+        scheduleText = `${scheduleText}${schedule.date.getFullYear()}/${
+          schedule.date.getMonth() + 1
+        }/${schedule.date.getDate()}(${
+          week[schedule.date.getDay()]
+        }) ${time}:00~\n`;
+      });
+    });
+  }
   document.getElementById("scheduleText").textContent = scheduleText;
 };
 
@@ -147,4 +162,95 @@ const sortSchedulesAscending = () => {
       return -1;
     }
   });
+};
+
+Array.from(document.getElementsByClassName("schedule-type")).forEach(
+  (radio) => {
+    radio.onchange = (event) => {
+      scheduleType = event.target.value;
+      const activeDates = Array.from(
+        document.querySelectorAll("td:not(.disabled)")
+      );
+      if (scheduleType === "dayOnly") {
+        activeDates.forEach((activeDate) => {
+          activeDate.classList.remove("open-modal");
+          activeDate.removeAttribute("data-bs-toggle");
+          activeDate.removeAttribute("data-bs-target");
+        });
+      }
+      if (scheduleType === "selectTime") {
+        activeDates.forEach((activeDate) => {
+          activeDate.classList.add("open-modal");
+          activeDate.setAttribute("data-bs-toggle", "modal");
+          activeDate.setAttribute("data-bs-target", "#exampleModal");
+        });
+      }
+      renderScheduleText();
+    };
+  }
+);
+
+document.addEventListener("click", (event) => {
+  const isOpenModalButton = event.target.classList.contains("open-modal");
+  if (!isOpenModalButton) return;
+
+  const timeSchedule = document.getElementById("timeSchedule");
+  // 中身を空にする
+  if (timeSchedule.childElementCount) {
+    timeSchedule.innerHTML = "";
+  }
+
+  const timeScheduleDate = document.createElement("div");
+  const { year, month, date } = event.target.dataset;
+  const modalDate = new Date(`${year}-${parseInt(month) + 1}-${date}`);
+  timeScheduleDate.classList.add("h5");
+  timeScheduleDate.classList.add("text-center");
+  timeScheduleDate.textContent = `${modalDate.getFullYear()}/${
+    modalDate.getMonth() + 1
+  }/${modalDate.getDate()}(${week[modalDate.getDay()]})`;
+
+  timeSchedule.appendChild(timeScheduleDate);
+  for (let i = 0; i < 24; i++) {
+    const timeScheduleButton = document.createElement("div");
+    timeScheduleButton.classList.add(
+      "d-block",
+      "w-25",
+      "mx-auto",
+      "mb-1",
+      "btn",
+      "btn-outline-primary"
+    );
+    timeScheduleButton.onclick = selectTime;
+    timeScheduleButton.dataset.year = modalDate.getFullYear();
+    timeScheduleButton.dataset.month = modalDate.getMonth();
+    timeScheduleButton.dataset.date = modalDate.getDate();
+    timeScheduleButton.dataset.time = i;
+    timeScheduleButton.textContent = `${i}:00~`;
+    timeSchedule.appendChild(timeScheduleButton);
+  }
+});
+
+const selectTime = (event) => {
+  const { year, month, date, time } = event.target.dataset;
+  const scheduleIndex = getScheduleIndexByDate(year, month, date);
+  if (event.target.classList.contains("active")) {
+    event.target.classList.remove("active");
+    for (let i in schedules[scheduleIndex].times) {
+      if (schedules[scheduleIndex].times[i] === time) {
+        schedules[scheduleIndex].times.splice(i, 1);
+        break;
+      }
+    }
+  } else {
+    event.target.classList.add("active");
+    schedules[scheduleIndex].times.push(time);
+  }
+  schedules[scheduleIndex].times.sort((a, b) => {
+    if (a > b) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+  renderScheduleText();
 };
