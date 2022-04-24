@@ -100,9 +100,11 @@ document.addEventListener("click", (event) => {
   const { year, month, date } = event.target.dataset;
 
   if (event.target.classList.contains("active")) {
-    event.target.classList.remove("active");
-    const scheduleIndex = getScheduleIndexByDate(year, month, date);
-    deleteScheduleByIndex(scheduleIndex);
+    if (scheduleType === "dayOnly") {
+      event.target.classList.remove("active");
+      const scheduleIndex = getScheduleIndexByDate(year, month, date);
+      deleteScheduleByIndex(scheduleIndex);
+    }
   } else {
     event.target.classList.add("active");
     createSchedule(year, month, date);
@@ -211,7 +213,7 @@ document.addEventListener("click", (event) => {
 
   timeSchedule.appendChild(timeScheduleDate);
   for (let i = 0; i < 24; i++) {
-    const timeScheduleButton = document.createElement("div");
+    const timeScheduleButton = document.createElement("button");
     timeScheduleButton.classList.add(
       "d-block",
       "w-25",
@@ -228,6 +230,19 @@ document.addEventListener("click", (event) => {
     timeScheduleButton.textContent = `${i}:00~`;
     timeSchedule.appendChild(timeScheduleButton);
   }
+  const scheduleIndex = getScheduleIndexByDate(year, month, date);
+  schedules[scheduleIndex].times.forEach((time) => {
+    document
+      .querySelector(`button[data-time='${time}']`)
+      .classList.add("active");
+  });
+  document.getElementById("deselectSchedule").dataset.scheduleIndex =
+    scheduleIndex;
+  document.getElementById("deselectSchedule").onclick = () => {
+    schedules.splice(scheduleIndex, 1);
+    event.target.classList.remove("active");
+    renderScheduleText();
+  };
 });
 
 const selectTime = (event) => {
@@ -236,14 +251,14 @@ const selectTime = (event) => {
   if (event.target.classList.contains("active")) {
     event.target.classList.remove("active");
     for (let i in schedules[scheduleIndex].times) {
-      if (schedules[scheduleIndex].times[i] === time) {
+      if (schedules[scheduleIndex].times[i] === parseInt(time)) {
         schedules[scheduleIndex].times.splice(i, 1);
         break;
       }
     }
   } else {
     event.target.classList.add("active");
-    schedules[scheduleIndex].times.push(time);
+    schedules[scheduleIndex].times.push(parseInt(time));
   }
   schedules[scheduleIndex].times.sort((a, b) => {
     if (a > b) {

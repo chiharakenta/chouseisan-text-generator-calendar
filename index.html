@@ -29,7 +29,7 @@
             <input type="radio" class="schedule-type" id="scheduleType1" name="scheduleType" value="dayOnly"
                 checked><label for="scheduleType1">日付のみ選択</label>
             <input type="radio" class="schedule-type" id="scheduleType2" name="scheduleType" value="selectTime"><label
-                for="scheduleType2">開始時間を選択</label>
+                for="scheduleType2">開始時刻を選択</label>
         </div>
         <div>
             <textarea name="scheduleText" id="scheduleText" cols="30" rows="10"></textarea>
@@ -44,7 +44,8 @@
                     </div>
                     <div id="timeSchedule" class="modal-body"></div>
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-outline-danger">日付の選択を解除</button>
+                        <button type="button" id="deselectSchedule" class="btn btn-outline-danger"
+                            data-bs-dismiss="modal">日付の選択を解除</button>
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">閉じる</button>
                     </div>
                 </div>
