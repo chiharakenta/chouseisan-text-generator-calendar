@@ -286,3 +286,12 @@ const selectTime = (event) => {
   });
   renderScheduleText();
 };
+
+document.getElementById("copy").onclick = async () => {
+  const schedule = document.getElementById("scheduleText").value;
+  await navigator.clipboard.writeText(schedule);
+  alert(
+    "スケジュールをコピーしました。\n調整さんの「日にち候補」に貼り付けてください。"
+  );
+  window.open("https://chouseisan.com/#tab2", "_blank");
+};
