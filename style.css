@@ -34,14 +34,15 @@ th, td {
 }
 td {
     cursor: pointer;
-}
-/*日曜日*/
-td:first-child {
-    color: red;
+    font-weight: bold;
 }
 /*土曜日*/
 td:last-child {
     color: blue;
+}
+/*日曜・祝日*/
+td:first-child, td.holiday {
+    color: red;
 }
 /*前後月の日付*/
 td.disabled {

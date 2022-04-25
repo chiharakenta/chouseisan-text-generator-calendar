@@ -86,7 +86,12 @@ function createProcess(year, month) {
         if (isActive) {
           dateElement = `<td class='active' data-year=${year} data-month=${month} data-date=${count}>${count}</td>`;
         } else {
-          dateElement = `<td data-year=${year} data-month=${month} data-date=${count}>${count}</td>`;
+          const isHoliday = JapaneseHolidays.isHoliday(thisDay);
+          if (isHoliday) {
+            dateElement = `<td class='holiday' data-year=${year} data-month=${month} data-date=${count}>${count}</td>`;
+          } else {
+            dateElement = `<td data-year=${year} data-month=${month} data-date=${count}>${count}</td>`;
+          }
         }
       }
       calendar += dateElement;
