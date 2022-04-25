@@ -1,5 +1,6 @@
 const week = ["日", "月", "火", "水", "木", "金", "土"];
 const today = new Date();
+today.setHours(0, 0, 0, 0);
 // 月末だとずれる可能性があるため、1日固定で取得
 var showDate = new Date(today.getFullYear(), today.getMonth(), 1);
 
@@ -57,6 +58,7 @@ function createProcess(year, month) {
     // 1colum単位で設定
     for (var j = 0; j < week.length; j++) {
       let dateElement;
+      const thisDay = new Date(year, month, count + 1);
       if (i == 0 && j < startDayOfWeek) {
         // 1行目で1日まで先月の日付を設定
         dateElement =
@@ -67,6 +69,9 @@ function createProcess(year, month) {
         // 最終行で最終日以降、翌月の日付を設定
         count++;
         dateElement = "<td class='disabled'>" + (count - endDate) + "</td>";
+      } else if (thisDay.getTime() < today.getTime()) {
+        count++;
+        dateElement = "<td class='disabled'>" + count + "</td>";
       } else {
         // 当月の日付を曜日に照らし合わせて設定
         count++;
