@@ -28,6 +28,7 @@ function showProcess(date) {
 
   var calendar = createProcess(year, month);
   document.querySelector("#calendar").innerHTML = calendar;
+  switchModalButton();
 }
 
 // カレンダー作成
@@ -177,29 +178,36 @@ const sortSchedulesAscending = () => {
   });
 };
 
+const switchModalButton = () => {
+  Array.from(document.getElementsByClassName("schedule-type")).forEach(
+    (scheudleTypeElement) => {
+      if (scheudleTypeElement.checked) {
+        scheduleType = scheudleTypeElement.value;
+      }
+    }
+  );
+  const activeDates = Array.from(
+    document.querySelectorAll("td:not(.disabled)")
+  );
+  if (scheduleType === "dayOnly") {
+    activeDates.forEach((activeDate) => {
+      activeDate.classList.remove("open-modal");
+      activeDate.removeAttribute("data-bs-toggle");
+      activeDate.removeAttribute("data-bs-target");
+    });
+  }
+  if (scheduleType === "selectTime" || scheduleType === "selectEveryHour") {
+    activeDates.forEach((activeDate) => {
+      activeDate.classList.add("open-modal");
+      activeDate.setAttribute("data-bs-toggle", "modal");
+      activeDate.setAttribute("data-bs-target", "#exampleModal");
+    });
+  }
+  renderScheduleText();
+};
 Array.from(document.getElementsByClassName("schedule-type")).forEach(
   (radio) => {
-    radio.onchange = (event) => {
-      scheduleType = event.target.value;
-      const activeDates = Array.from(
-        document.querySelectorAll("td:not(.disabled)")
-      );
-      if (scheduleType === "dayOnly") {
-        activeDates.forEach((activeDate) => {
-          activeDate.classList.remove("open-modal");
-          activeDate.removeAttribute("data-bs-toggle");
-          activeDate.removeAttribute("data-bs-target");
-        });
-      }
-      if (scheduleType === "selectTime" || scheduleType === "selectEveryHour") {
-        activeDates.forEach((activeDate) => {
-          activeDate.classList.add("open-modal");
-          activeDate.setAttribute("data-bs-toggle", "modal");
-          activeDate.setAttribute("data-bs-target", "#exampleModal");
-        });
-      }
-      renderScheduleText();
-    };
+    radio.onchange = switchModalButton;
   }
 );
 
